@@ -1,14 +1,17 @@
-import React from 'react';
+import {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
 } from '@react-navigation/drawer';
+
 import ExpenseList from '../menusScreen/ExpenseList';
 import MoneyList from '../menusScreen/MoneyList';
 import MoneyOutList from '../menusScreen/MoneyOutList';
@@ -52,6 +55,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Report"
         component={ReportScreen}
@@ -70,6 +74,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Sale List"
         component={SaleListScreen}
@@ -88,6 +93,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Sale Return List"
         component={SaleReturnList}
@@ -106,6 +112,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Order/Quotation/Estimate"
         component={OrderScreen}
@@ -124,6 +131,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Purchase List"
         component={PurchaseList}
@@ -142,6 +150,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Purchase Return List"
         component={PurchaseReturnList}
@@ -160,6 +169,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Expense List"
         component={ExpenseList}
@@ -178,6 +188,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Money In List"
         component={MoneyList}
@@ -196,6 +207,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Money Out List"
         component={MoneyOutList}
@@ -214,6 +226,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Payments"
         component={Payments}
@@ -233,6 +246,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Party List"
         component={PartyScreen}
@@ -251,6 +265,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Staff List"
         component={StaffList}
@@ -269,6 +284,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Inventory/Item List"
         component={InventoryScreen}
@@ -287,6 +303,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Settings"
         component={Setting}
@@ -305,6 +322,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Bank"
         component={Bank}
@@ -323,6 +341,7 @@ export default function DrawerScreen() {
           headerTintColor: 'white',
         }}
       />
+
       <Drawer.Screen
         name="Cash Book"
         component={CashBook}
@@ -346,51 +365,45 @@ export default function DrawerScreen() {
 }
 
 function CustomDrawerContent(props) {
- const userSlice = useSelector((state) => state.registerUserSlice)
-//  console.log(dataSlice,"+++++++++++++++++++++")
+  const userSlice = useSelector(state => state.registerUserSlice);
+
+  //  const {firstName, lastName, userName,sirName, titleName} = route.params
+  //  console.log(dataSlice,"+++++++++++++++++++++")
+  const [phone, setPhone] = useState();
+  useEffect(async () => {
+    await auth().onAuthStateChanged(user => {
+      setPhone(user.phoneNumber);
+      console.log('user==========================>', user)
+    });
+
+    
+  }, []);
+
   return (
     <DrawerContentScrollView {...props} showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
-        <Text
-          style={{
-            fontSize: 15,
-            fontWeight: 'bold',
-            marginLeft: 15,
-            marginTop: 20,
-            color: 'white',
-          }}>
-          OP: mobile Number
+        <Text style={styles.phoneText}>OP: {phone}</Text>
+        <Text style={styles.profileText}>
+          Profile: {userSlice.firstName + ' ' + userSlice.lastName}
         </Text>
-        <Text
-          style={{
-            fontSize: 15,
-            fontWeight: 'bold',
-            marginLeft: 15,
-            marginTop: 10,
-            color: 'white',
-          }}>
-          Profile: {userSlice.firstName+' '+userSlice.lastName}
-        </Text>
-        <Text style={{fontSize: 15, marginLeft: 15, color: 'white'}}>
-          {}
-        </Text>
+        <Text style={{fontSize: 15, marginLeft: 15, color: 'white'}}>{}</Text>
         <TouchableOpacity style={styles.touchButton}>
           <Text style={{marginTop: 2, alignSelf: 'center', fontWeight: 'bold'}}>
-            {userSlice.titleName}
+            {userSlice.userName}
           </Text>
         </TouchableOpacity>
       </View>
       <DrawerItemList {...props} />
       <DrawerItem
-        // options={{
-        //   drawerIcon: ({focused, size}) => (
-        //     <Ionicons
-        //       name="business"
-        //       size={25}
-        //       color={focused ? '#307ecc' : '#A9A9A9'}
-        //     />
-        //   ),
-        // }}
+        options={{
+          drawerIcon: ({focused, size}) => (
+            <Ionicons
+              name="business"
+              size={25}
+              color={focused ? '#307ecc' : '#A9A9A9'}
+            />
+          ),
+        }}
         label="Log out"
         onPress={() => {
           alert('user logout');
@@ -415,5 +428,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 15,
     backgroundColor: 'white',
+  },
+  phoneText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginLeft: 15,
+    marginTop: 20,
+    color: 'white',
+  },
+  profileText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginLeft: 15,
+    marginTop: 10,
+    color: 'white',
   },
 });

@@ -4,7 +4,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Provider} from 'react-redux';
 import {store} from './src/redux/store';
 
-
 import SplashScreen from './src/screen/SplashScreen';
 import LoginScreen from './src/screen/LoginScreen';
 import DashboardScreen from './src/screen/DashboardScreen';
@@ -36,6 +35,7 @@ import AddMoneyIn from './src/ExtraScreen/AddMoneyIn';
 import AddMoneyOut from './src/ExtraScreen/AddMoneyOut';
 import ItemReport from './src/ExtraScreen/ItemReport';
 import SelectBank from './src/ExtraScreen/SelectBank';
+import ViewBills from './src/PrintAndViewBill/ViewBills';
 
 // Business Reports 
 import ProfitAndLossStatement from './src/BusinessReport/ProfitAndLossStatement';
@@ -50,12 +50,13 @@ export default function App() {
     </Provider>
   );
 }
+
 //================================= Stack Handler =============================
 const StackHandler = () => {
   return (
     
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Authentication">
+      <Stack.Navigator initialRouteName="Welcome">
         <Stack.Screen
           name="Welcome"
           component={SplashScreen}
@@ -90,7 +91,12 @@ const StackHandler = () => {
         <Stack.Screen
           name="Bottam"
           component={BottomScreen}
-          options={{headerShown: false}}
+          options={{
+            headerShown: false,
+            headerStyle: {
+              backgroundColor: '#008AD0',
+            }
+          }}
         />
         <Stack.Screen
           name="Dashboard"
@@ -170,6 +176,9 @@ const StackHandler = () => {
             headerShown: true,
             headerTitle: 'Add Customer/ Party',
             headerTintColor: 'white',
+            headerStyle: {
+            backgroundColor: '#008AD0',
+          },
           }}
         />
         <Stack.Screen
@@ -180,6 +189,9 @@ const StackHandler = () => {
             headerShown: true,
             headerTitle: 'Add Customer/ Party',
             headerTintColor: 'white',
+            headerStyle: {
+            backgroundColor: '#008AD0',
+          },
           }}
         />
         <Stack.Screen 
@@ -412,14 +424,30 @@ const StackHandler = () => {
           },
           }}
         />
+
+<Stack.Screen 
+          name='ViewBills'
+          component={ViewBills}
+          options={{
+            animation: 'none',
+            headerShown: true,
+            headerTitle: 'Sale', 
+            headerTintColor: 'white', 
+            headerStyle: {
+            backgroundColor: '#008AD0',
+          },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer> 
   );
 };
+
+
 //================================= Authentication Component =============================
 const Auth = () => {
   return (
-    <Stack.Navigator initialRouteName="Register">
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
         name="Login"
         component={LoginScreen}

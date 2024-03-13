@@ -1,28 +1,42 @@
-import { StyleSheet, SafeAreaView, TouchableOpacity, Text, View, BackHandler, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Text,
+  View,
+  BackHandler,
+  ScrollView,
+} from 'react-native';
 import React from 'react';
 
-
 export default function AddItemtoBill({navigation}) {
-  
   return (
     <SafeAreaView style={styles.container}>
-    {/* Create New Item */}
-    <ScrollView>
-      <TouchableOpacity style={styles.addItemButton} onPress={() => navigation.navigate('InventoryModal')}>
-         <Text style={styles.addItemText}> Create New Item + </Text>
-      </TouchableOpacity>
-    </ScrollView>
-    {/* Save and Print Button */}
-    <View style={styles.saveButtonView}>
-        <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate('AddNewSale')}>
-            <Text style={styles.DueButtonText}>{'      '}Bill & Due Date {'\n'} Transport, Discount</Text>
+      {/* Create New Item */}
+      <ScrollView>
+        <TouchableOpacity
+          style={styles.addItemButton}
+          onPress={() => navigation.navigate('InventoryModal')}>
+          <Text style={styles.addItemText}> Create New Item + </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.saveButton} onPress={() => alert('save Data')}>
-            <Text style={styles.saveText}>Save and Print</Text>
+      </ScrollView>
+      {/* Save and Print Button */}
+      <View style={styles.saveButtonView}>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() => navigation.navigate('AddNewSale')}>
+          <Text style={styles.DueButtonText}>
+            {'      '}Bill & Due Date {'\n'} Transport, Discount
+          </Text>
         </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() => alert('save Data')}>
+          <Text style={styles.saveText}>Save and Print</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({

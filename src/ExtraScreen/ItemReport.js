@@ -3,17 +3,16 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ModalSelector from 'react-native-modal-selector';
 
-
+const data = [
+  {key: 1, label: 'Inventory (1)'},
+  {key: 2, label: 'Low Stock'},
+  {key: 3, label: 'Not In Stock'},
+  {key: 4, label: 'In Stock'},
+  {key: 5, label: 'Online Shop (1)'},
+  {key: 6, label: 'All (1)'},
+];
 export default function ItemReport({navigation}) {
-  const data = [
-    {key: 1, label: 'Inventory (1)'},
-    {key: 2, label: 'Low Stock'},
-    {key: 3, label: 'Not In Stock'},
-    {key: 4, label: 'In Stock'},
-    {key: 5, label: 'Online Shop (1)'},
-    {key: 6, label: 'All (1)'},
-  ];
-
+ 
   return (
     <View style={styles.container}>
       <View style={styles.dropdownView}>

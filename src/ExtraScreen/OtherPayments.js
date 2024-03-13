@@ -1,19 +1,31 @@
-import {StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Alert} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import React from 'react';
 
 export default function OtherPayments({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
-    <ScrollView>
-       <View style={styles.mainInnerView}>
-         <TouchableOpacity style={styles.payoutButton} onPress={() => navigation.navigate('Payments')}>
+      <ScrollView>
+        <View style={styles.mainInnerView}>
+          <TouchableOpacity
+            style={styles.payoutButton}
+            onPress={() => navigation.navigate('Payments')}>
             <Text style={styles.payoutText}>Payouts</Text>
-         </TouchableOpacity>
-         <TouchableOpacity style={styles.othersButton} onPress={() => Alert.alert('Ok Other Payments')}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.othersButton}
+            onPress={() => Alert.alert('Ok Other Payments')}>
             <Text style={styles.othersText}>Others</Text>
-         </TouchableOpacity>
-       </View>
-    </ScrollView>  
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -33,7 +45,7 @@ const styles = StyleSheet.create({
     width: 150,
     backgroundColor: 'white',
     borderRadius: 20,
-    marginRight: 25, 
+    marginRight: 25,
   },
   payoutText: {
     alignSelf: 'center',

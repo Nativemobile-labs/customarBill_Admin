@@ -1,67 +1,90 @@
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import React, {useEffect} from 'react';
 import Icons from 'react-native-vector-icons/Ionicons';
 
 export default function AddCustomerToBill({navigation}) {
-
-
-  
+  const renderItem = ({item}) => {
+    return (
+      <TouchableOpacity
+        style={styles.cashButton}
+        onPress={() => navigation.navigate('AddItemToBill')}>
+        <Text style={styles.cashText}>{item.Name}</Text>
+      </TouchableOpacity>
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-      {/* Top Menus */}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* TOP MENUS */}
         <View style={styles.buttonView}>
           <TouchableOpacity style={styles.SelectedButton}>
             <Text style={styles.SelectedText}> All (4)</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.touchButton} onPress={() => navigation.navigate('CustomerBills')}>
+          <TouchableOpacity
+            style={styles.touchButton}
+            onPress={() => navigation.navigate('CustomerBills')}>
             <Text style={styles.touchText}>Customer</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.touchButton} onPress={() => navigation.navigate('SupplierBills')}>
+          <TouchableOpacity
+            style={styles.touchButton}
+            onPress={() => navigation.navigate('SupplierBills')}>
             <Text style={styles.touchText}>Supplier</Text>
           </TouchableOpacity>
         </View>
-      {/* Frequent Party */}
-      <View style={styles.mainLineView}>
-          <View style={styles.drawLine} />  
-              <Text style={styles.lineText}>Frequent Party</Text>    
+       
+        {/* FREQUENT PARTY */}
+        <View style={styles.mainLineView}>
           <View style={styles.drawLine} />
-      </View>
-      {/* Cash Sale */}
-      <TouchableOpacity style={styles.cashButton} onPress={() => navigation.navigate('AddItemToBill')}>
-        <Text style={styles.cashText}> Cash Sale</Text>
-      </TouchableOpacity>
-      {/* Parties */}
-      <View style={styles.mainLineView}>
-          <View style={styles.drawLine} />  
-              <Text style={styles.lineText}>Parties</Text>    
+          <Text style={styles.lineText}>Frequent Party</Text>
           <View style={styles.drawLine} />
-      </View>
-      {/* Multiple Button */}
-      <TouchableOpacity style={styles.cashButton} onPress={() => navigation.navigate('AddItemToBill')}>
-        <Text style={styles.cashText}>Cash Sale</Text>
-      </TouchableOpacity>  
+        </View>
 
-      <TouchableOpacity style={styles.cashButton} onPress={() => navigation.navigate('AddItemToBill')}>
-        <Text style={styles.cashText}>Demo Customer 1</Text>
+        {/* CASH SALE */}
+        <TouchableOpacity
+          style={styles.cashButton}
+          onPress={() => navigation.navigate('AddItemToBill')}>
+          <Text style={styles.cashText}> Cash Sale</Text>
+        </TouchableOpacity>
+
+        {/* PARTIES */}
+        <View style={styles.mainLineView}>
+          <View style={styles.drawLine} />
+          <Text style={styles.lineText}>Parties</Text>
+          <View style={styles.drawLine} />
+        </View>
+
+        <View style={{marginBottom: 200}}>
+          <FlatList
+            data={allListData}
+            renderItem={renderItem}
+            scrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+      </ScrollView>
+
+      {/* ADD NEW CUSTOMER/PARTY */}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('AddCustomer')}>
+        <Icons
+          name="add-circle-outline"
+          size={30}
+          color="white"
+          style={styles.iconStyle}
+        />
+        <Text style={styles.addText}>Add New Customer/Party</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity style={styles.cashButton} onPress={() => navigation.navigate('AddItemToBill')}>
-        <Text style={styles.cashText}>Demo Customer 2</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.cashButton} onPress={() => navigation.navigate('AddItemToBill')}>
-        <Text style={styles.cashText}>Demo Customer 3</Text>
-      </TouchableOpacity>
-    </ScrollView>
-
-      {/* Add New Customer/Party */}
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddCustomer')}>
-          <Icons name='add-circle-outline' size={30} color='white' style={styles.iconStyle}/>
-          <Text style={styles.addText}>Add New Customer/Party</Text>
-       </TouchableOpacity>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -104,27 +127,28 @@ const styles = StyleSheet.create({
   },
   mainLineView: {
     flexDirection: 'row',
-     alignItems: 'center',
+    alignItems: 'center',
     alignSelf: 'center',
-     width: '98%',
-     marginTop: 5,
+    width: '98%',
+    marginTop: 5,
   },
   drawLine: {
     flex: 1,
-    height: 1, 
+    height: 1,
     backgroundColor: 'black',
   },
   lineText: {
-    width: 'auto', 
+    width: 'auto',
     textAlign: 'center',
-    color:'black',
+    color: 'black',
     marginLeft: 4,
     marginRight: 4,
   },
   cashButton: {
     height: 45,
     backgroundColor: 'white',
-    margin: 5,
+    margin: 3,
+    marginHorizontal: 10,
     borderRadius: 5,
   },
   cashText: {
@@ -155,3 +179,26 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
 });
+
+const allListData = [
+  {
+    id: 1,
+    Name: 'Cash Sale',
+  },
+  {
+    id: 2,
+    Name: 'Demo Customer_1',
+  },
+  {
+    id: 3,
+    Name: 'Demo Customer_2',
+  },
+  {
+    id: 4,
+    Name: 'Demo Customer_3',
+  },
+  {
+    id: 5,
+    Name: 'Demo Customer_4',
+  },
+];

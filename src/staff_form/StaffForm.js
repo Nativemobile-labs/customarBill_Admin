@@ -14,19 +14,19 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import SelectDropdown from 'react-native-select-dropdown';
 import {useDispatch} from 'react-redux';
 import {staff} from '../redux/reducerSlice.js/StaffSlice';
-
+const PickerData = [
+  'Sales',
+  'Partner',
+  'Guest (accountant/advocate)',
+  'Owner',
+  'InventoryManager',
+];
 export default function StaffForm() {
   const [staffName, setStaffName] = useState('');
   const [staffPhone, setStaffPhone] = useState('+91');
   const [selectedItem, setSelectedItem] = useState([]);
   const [contacts, setContacts] = useState([]);
-  const PickerData = [
-    'Sales',
-    'Partner',
-    'Guest (accountant/advocate)',
-    'Owner',
-    'InventoryManager',
-  ];
+  
 
   const dispatch = useDispatch();
 

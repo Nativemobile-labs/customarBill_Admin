@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "36950102599",
-    "project_id": "shopadmin-75be2",
-    "storage_bucket": "shopadmin-75be2.appspot.com"
+    "project_number": "180727565603",
+    "project_id": "squadshopadmin",
+    "storage_bucket": "squadshopadmin.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:36950102599:android:34350908a79cdafd10d762",
+        "mobilesdk_app_id": "1:180727565603:android:199a3c790b2f32137fd096",
         "android_client_info": {
           "package_name": "com.shopping_admin"
         }
       },
       "oauth_client": [
         {
-          "client_id": "36950102599-6lj6n51u0nn72pir908vp5kcg31qsfqe.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.shopping_admin",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
-        {
-          "client_id": "36950102599-nh0khjjkjsihs36keenk0j2qsh61klg2.apps.googleusercontent.com",
+          "client_id": "180727565603-q30vpuk4bm59brl5s87qgd6qo9g2rnjd.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCHjKsEHznaxyNb3wwp4MnADKvKkAN2RTM"
+          "current_key": "AIzaSyBNVDgChxHFqvztS1EwqTrQ_89Bm8QvKK0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "36950102599-nh0khjjkjsihs36keenk0j2qsh61klg2.apps.googleusercontent.com",
+              "client_id": "180727565603-q30vpuk4bm59brl5s87qgd6qo9g2rnjd.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

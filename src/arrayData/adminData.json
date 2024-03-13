@@ -1,0 +1,255 @@
+{
+        "user": [
+                {
+                        "firstName":"",
+                        "lastName": "",
+                        "sirName":"",
+                        "titleName": "",
+                        "UserName": ""
+                },
+                {
+                "partyList": [
+                        {
+                                "partyTags":[
+                                       {"tagsName": ""},
+                                       {"tagsName": ""},
+                                       {"tagsName": ""},
+                                       {"tagsName": ""}
+                                ],
+                                "selectTag": [
+                                        {
+                                                "All":[
+                                                        {
+                                
+                                                        }
+                                                ],
+                                                "Receivable":[
+                                                        {
+
+                                                        }
+                                                ],
+                                                "Payable": [
+                                                        {
+
+                                                        }
+                                                ]
+
+                                                
+                                        }
+                                ]
+                        }
+                ],
+                "Customer": [
+                        {
+                                "customerName":[
+                                        {
+                                          
+                                          "phone": "",
+                                          "GST_Number": "",  
+                                          "Billing_Type": "",
+                                          "Billing_Address": "",
+                                          "Billing_Address": "",
+                                          "Billing_Pin_code": "",
+                                          "Delivery_Address": "",
+                                          "Delivery_Address": "",
+                                          "Delivery_Pin_code": "",
+                                          "Opening_Balance": "",
+                                          "Payment_Mode": "",
+                                          "Patment_Term": "" 
+                                        }
+                                ]
+                             
+                        }
+                ],
+                "Supplier": [
+                        {
+                                "supplierName":[
+                                        {
+                                                
+                                                "phone": "",
+                                                "GST_Number": "",  
+                                                "Billing_Type": "",
+                                                "Billing_Address": "",
+                                                "Billing_Address": "",
+                                                "Billing_Pin_code": "",
+                                                "Delivery_Address": "",
+                                                "Delivery_Address": "",
+                                                "Delivery_Pin_code": "",
+                                                "Opening_Balance": "",
+                                                "Payment_Mode": "",
+                                                "Patment_Term": "" 
+                                              }    
+                                ]
+                        }
+                ],
+                "Inventory":[
+                        {
+                        "Inventory_Name":{
+                                "Sale_Price": "",
+                                "Purchase_Price": "",
+                                "Current_Stock": ""
+                        }
+                        }
+                ],
+                "Categories":[
+                        {
+                                "CategoryName": ""
+                        }
+                ],
+                "Return_Sale": [
+                        {
+                                "Sale_Return_Number": {
+                                        "Sale_Return_Number": "",
+                                        "Start_Date":"",
+                                        "End_Date": "",
+                                        "Sale_Bill_No":"",
+                                        "Supplier_Name": "",
+                                        "Total_Amount": "",
+                                        "Amount_Paid": "",
+                                        "Notes": "",
+                                        "Add_Transport": {
+                                                "Labour_Charges": "",
+                                                "Order_Number": "",
+                                                "Challan_Number": "",
+                                                "Bill_Number": "",
+                                                "Bill_Date": ""
+                                        },
+                                        "Transport_Details": {
+                                                "Transporter_Name": "",
+                                                "Vehicle_Number": "",
+                                                "Transport_Distance": "",
+                                                "Delivery_Location": "",
+                                                "Delivery_Date": ""
+                                        },
+                                        "Message": ""
+                                }
+                        }
+                        
+                ],
+                "Purchase_list": [
+                        {
+                                "Purchase_Number": {
+                                        "Purchase_Number": "",
+                                        "Purchase_Date":"",
+                                        "Invoice_No":"",
+                                        "Supplier_Name": "",
+                                        "Total_Amount": "",
+                                        "Amount_Paid": "",
+                                        "Cash_Discount(%)": "",
+                                        "Cash_Discount(Rupee)": "",
+                                        "Notes": "",
+                                        "Add_Transport": {
+                                                "Labour_Charges": "",
+                                                "Purchase_Number": "",
+                                                "Challan_Number": "",
+                                                "Bill_Number": "",
+                                                "Bill_Date": ""
+                                        },
+                                        "Transport_Details": {
+                                                "Transporter_Name": "",
+                                                "Vehicle_Number": "",
+                                                "Transport_Distance": "",
+                                                "Delivery_Location": "",
+                                                "Delivery_Date": ""
+                                        },
+                                        "Message": ""
+                                }
+                        }
+                        
+                ],
+                "Purchase_Return": [
+                        {
+                                "Purchase_Return_Number": {
+                                        "Purchase_Return_Number": "",
+                                        "Bill_Date":"",
+                                        "Bill_Due_Date":"",
+                                        "Purchase_Bill_Date":"",
+                                        "Billing_Term":"",
+                                        "Purchase_Bill_No": "",
+                                        "Customer_Name": "",
+                                        "Total_Amount": "",
+                                        "Amount_Paid": "",
+                                        "Cash_Discount(%)": "",
+                                        "Cash_Discount(Rupee)": "",
+                                        "Notes": "",
+                                        "Add_Transport": {
+                                                "Labour_Charges": "",
+                                                "Purchase_Number": "",
+                                                "Challan_Number": "",
+                                                "Bill_Number": "",
+                                                "Bill_Date": ""
+                                        },
+                                        "Transport_Details": {
+                                                "Transporter_Name": "",
+                                                "Vehicle_Number": "",
+                                                "Transport_Distance": "",
+                                                "Delivery_Location": "",
+                                                "Delivery_Date": ""
+                                        },
+                                        "Images":[]
+                                }
+                        }
+                        
+                ],
+                "Add_Expense": [
+                        {
+                                "Expense_Number":  {
+                                        "Expense_Number": "",
+                                        "Date":"",
+                                        "select_Category":"",
+                                        "Customer_Name": "",
+                                        "Total_Amount": "",
+                                        "Amount_Paid": "",
+                                        "Notes": ""
+                                }
+                        }
+                        
+                ],
+                "Money_In": [
+                        {
+                                "Receipt_Number": {
+                                        "Receipt_Number": "",
+                                        "Money_In_Date":"",
+                                        "select_Person":"",
+                                        "Customer_Name": "",
+                                        "Delivery_State": "",
+                                        "Mode_of_Transaction": "",
+                                        "Transaction_No.": "",
+                                        "Paid_Amount": "",
+                                        "Notes": ""
+                                }
+                        }
+                        
+                ],
+                "Money_out": [
+                        {
+                                "Receipt_Number": {
+                                        "Receipt_Number": "",
+                                        "Money_Out_Date":"",
+                                        "select_Person":"",
+                                        "Customer_Name": "",
+                                        "Delivery_State": "",
+                                        "Mode_of_Transaction": "",
+                                        "Transaction_No.": "",
+                                        "Paid_Amount": "",
+                                        "Notes": ""
+                                }
+                        }
+                        
+                ],
+                "Staff_List": [
+                        {
+                                "Staff_Name": "",
+                                "Staff_Phone": "", 
+                                "Staff_Categories": ""
+
+                        }
+                ]
+
+                }    
+        ]
+
+       
+
+       
+}

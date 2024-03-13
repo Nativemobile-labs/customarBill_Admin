@@ -6,38 +6,164 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  FlatList,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import SelectDropdown from 'react-native-select-dropdown';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
-
+const PickerData = [
+  'Month',
+  'Year',
+  'Custom',
+  'Last 7 Days',
+  'Today',
+  'Last 30 Days',
+];
 export default function PurchaseReturnList({navigation}) {
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
-  const PickerData = [
-    'Month',
-    'Year',
-    'Custom',
-    'Last 7 Days',
-    'Today',
-    'Last 30 Days',
-  ];
+  
 
   // Show Date
   useEffect(() => {
     let today = new Date();
     let date =
-      today.getDate() + '/' + today.getMonth() + 1 + '/' + today.getFullYear();
+      today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
     setStartDate(date);
     setEndDate(date);
   }, []);
 
   const pReturnSlice = useSelector((state) => state.addPurchaseReturnSlice)
   const count = pReturnSlice.value += 1
+
+  const renderItem = ({item}) => {
+    return (
+      <View
+        style={{
+          marginHorizontal: 15,
+          backgroundColor: 'white',
+          marginTop: 8,
+          borderRadius: 5,
+          height: 120,
+        }}>
+        <TouchableOpacity onPress={() => alert('show invoice')}
+          style={{
+            borderColor: 'blue',
+            position: 'absolute',
+            borderWidth: 1,
+            borderRadius: 5,
+            left: 10,
+            top: 10,
+            height: 23,
+            width: 'auto',
+            paddingLeft: 5,
+            paddingRight: 15,
+            borderStyle: 'dashed',
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              fontWeight: 'bold',
+              fontSize: 15,
+            }}>
+            {item.Name}
+          </Text>
+        </TouchableOpacity>
+        <Text
+          style={{
+            color: 'black',
+            fontSize: 12,
+            position: 'absolute',
+            right: 80,
+            top: 10,
+          }}>
+          {item.Invoice_No}
+        </Text>
+        <Text
+          style={{
+            color: 'black',
+            fontSize: 15,
+            position: 'absolute',
+            right: 75,
+            top: 8,
+          }}>
+          |
+        </Text>
+        <Text
+          style={{
+            color: 'black',
+            fontSize: 12,
+            position: 'absolute',
+            right: 10,
+            top: 10,
+          }}>
+          {item.Date}
+        </Text>
+        <Text
+          style={{
+            color: 'blue',
+            fontSize: 14,
+            position: 'absolute',
+            fontWeight: '600',
+            left: 10,
+            top: 35,
+          }}>
+          Rs:{item.Price}
+        </Text>
+          <TouchableOpacity style={{
+            position: 'absolute',
+            right: 20,
+            top: 40,
+            borderWidth: 1,
+            borderColor: 'green',
+            borderRadius: 15,
+            paddingLeft: 8,
+            paddingRight: 8,
+            paddingBottom: 2,
+            paddingTop: 1,
+           
+          }}
+          onPress={() => alert('print & View')}
+          >
+            <Text style={{color: 'blue', fontSize: 12}}>View & Print</Text>
+          </TouchableOpacity>
+        <View
+          style={{
+            position: 'absolute',
+            left: 10,
+            top: 60,
+            borderWidth: 1,
+            borderColor: 'green',
+            borderRadius: 5,
+            paddingLeft: 2,
+            paddingRight: 3,
+            paddingBottom: 1,
+          }}>
+          <Text
+            style={{
+              color: 'green',
+              fontSize: 12,
+            }}>
+            {item.Payment}
+          </Text>
+        </View>
+        <Text
+          style={{
+            color: 'black',
+            fontSize: 12,
+            position: 'absolute',
+            left: 10,
+            top: 90,
+          }}>
+          {item.message}
+        </Text>
+      </View>
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.innerMainView}>
           {/* Dropdown List */}
           <SelectDropdown
@@ -96,6 +222,10 @@ export default function PurchaseReturnList({navigation}) {
             </Text>
           </View>
         </View>
+        <View style={{height: '100%', marginBottom: 200}}>
+        <FlatList data={SaleListData} renderItem={renderItem} />
+      </View>
+        </ScrollView>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => navigation.navigate('AddPurchaseReturn')}>
@@ -107,7 +237,6 @@ export default function PurchaseReturnList({navigation}) {
           />
           <Text style={styles.addText}>Add Purchase Return</Text>
         </TouchableOpacity>
-      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -155,7 +284,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   addButton: {
-    marginTop: 495,
+   position: 'absolute',
+   bottom: 20,
     backgroundColor: '#008AD0',
     height: 40,
     width: 200,
@@ -189,3 +319,102 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
 });
+
+const SaleListData = [
+  {
+    Name: 'Abc',
+    Invoice_No: 'Inv_001',
+    Date: '10/12/2022',
+    Price: '5000',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'fdss',
+    Invoice_No: 'Inv_002',
+    Date: '08/08/2022',
+    Price: '5000',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'Abfsc',
+    Invoice_No: 'Inv_003',
+    Date: '15/06/2022',
+    Price: '5000',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'Asfsbcdfsafsafafasasfasfas',
+    Invoice_No: 'Inv_004',
+    Date: '12/10/2022',
+    Price: '50030',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'Abc',
+    Invoice_No: 'Inv_001',
+    Date: '10/12/2022',
+    Price: '5000',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'fdss',
+    Invoice_No: 'Inv_002',
+    Date: '08/08/2022',
+    Price: '5000',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'Abfsc',
+    Invoice_No: 'Inv_003',
+    Date: '15/06/2022',
+    Price: '5000',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'Asfsbcdfsafsafafasasfasfas',
+    Invoice_No: 'Inv_004',
+    Date: '12/10/2022',
+    Price: '50030',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'Abc',
+    Invoice_No: 'Inv_001',
+    Date: '10/12/2022',
+    Price: '5000',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'fdss',
+    Invoice_No: 'Inv_002',
+    Date: '08/08/2022',
+    Price: '5000',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'Abfsc',
+    Invoice_No: 'Inv_003',
+    Date: '15/06/2022',
+    Price: '5000',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+  {
+    Name: 'Asfsbcdfsafsafafasasfasfas',
+    Invoice_No: 'Inv_004',
+    Date: '12/10/2022',
+    Price: '50030',
+    Payment: 'Paid',
+    message: 'Created By Admin',
+  },
+];

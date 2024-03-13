@@ -6,6 +6,7 @@ import {
   Text,
   Alert,
   SafeAreaView,
+  ToastAndroid,
 } from 'react-native';
 import {
   CodeField,
@@ -23,18 +24,19 @@ import {
 
 export default function LoginScreen({navigation}) {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [code, setCode] = useState('');
+  const [confirm, setConfirm] = useState(null);
+  const [code, setCode] = useState(null);
+  const [isFull, setIsFull] = React.useState(false);
   const phoneInput = useRef(null);
-  const ref = useBlurOnFulfill({code, cellCount: CELL_COUNT});
+  const ref = useBlurOnFulfill({code, cellCount: CELL_COUNT, setIsFull});
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     code,
     setCode,
   });
-  const CELL_COUNT = 4;
+  const CELL_COUNT = 6;
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(1);
-
+  const [user, setUser] = useState(null);
   const [errorPhone, setErrorPhone] = useState('');
 
   // ========================== Submit button =========================
@@ -49,34 +51,68 @@ export default function LoginScreen({navigation}) {
     }
   }, [phoneNumber]);
 
-  const submitButton = async () => {
-    if (phoneNumber.length !== 0) {
-      Alert.alert('Confirm Number', phoneNumber, [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-        },
-        {
-          text: 'Ok',
-          onPress: () => console.log('Ok Pressed'),
-        },
-      ]);
+  const handleFulfill = code => {
+    if (code.length === CELL_COUNT) {
+      setIsFull(true);
     }
-    const Confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-    setConfirm(Confirmation);
   };
+
+  const submitButton = async () => {
+    try {
+      const confirmation = await auth()
+        .signInWithPhoneNumber(phoneNumber)
+        setConfirm(confirmation);
+        console.log('confirmation===============>', confirmation)
+    } catch (error) {
+      console.log('error------------------>', error);
+      if (error.code === 'auth/too-many-requests') {
+        // console.log('auth/too-many-requests')
+        alert('auth/too-many-requests');
+      } else if (error.code === 'auth/invalid-phone-number') {
+        // console.log('auth/invalid-phone-number')
+        alert('auth/invalid-phone-number');
+      } else {
+        // console.log('something want wrong')
+        alert('something want wrong');
+      }
+    }
+  };
+
+  // useEffect(() => {
+  //     const subscribe = auth().onAuthStateChanged(onAuthStateChanged)
+  //     console.log('onAuth============>',onAuthStateChanged)
+  //     setUser(onAuthStateChanged)
+  //     return subscribe
+  // }, [])
+
+  // function onAuthStateChanged(user) {
+  //   console.log(user, 'user');
+  // }
+
+ 
 
   // =========================== Confirm Code ===========================
   const ConfirmCode = async () => {
-    // try {
-    //   await confirm.confirm(code);
-    // } catch (e) {
-    //   console.log('Invalid Code');
-    // }
-    navigation.navigate('Register');
+    try {
+      await confirm.confirm(code).then(result => {
+        // console.log('code result ===========>' ,result)
+        ToastAndroid.showWithGravity(
+          'Login Success',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+        );
+        // Alert.alert('Success')
+        console.log(result);
+        navigation.navigate('Register');
+      });
+    } catch (e) {
+      console.log('Invalid Code', e);
+
+      console.log();
+    }
   };
 
-  // =========================== Counter Down ===========================
+  // COUNTER DOWN
   useEffect(() => {
     let interval = setInterval(() => {
       if (seconds > 0) {
@@ -97,11 +133,11 @@ export default function LoginScreen({navigation}) {
   });
 
   const reset = () => {
-    alert('kkkk');
+    navigation.replace('Login')
   };
 
-  if (confirm) {
-    // ========================= Phone Number Authentication ====================
+  if (!confirm) {
+    // PHONE NUMBER AUTHENTICATION
     return (
       <View style={styles.container}>
         <Image source={require('../assets/pack.jpeg')} style={styles.image} />
@@ -120,22 +156,29 @@ export default function LoginScreen({navigation}) {
           <Text style={{color: 'red', fontWeight: 'bold'}}>{errorPhone}</Text>
         )}
 
-        {/* Send Otp Button */}
-        <TouchableOpacity style={styles.button} onPress={() => submitButton()}>
+        {/* SEND OTP BUTTON */}
+        <TouchableOpacity
+          style={styles.button}
+          disabled={!phoneNumber}
+          onPress={() => submitButton()}>
           <Text style={styles.text}>SEND OTP</Text>
         </TouchableOpacity>
       </View>
     );
   }
+
   return (
-    // ========================= Otp Verification ===========================
+    // OTP VERIFICATION
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>VERIFICATION</Text>
       <CodeField
         ref={ref}
         {...props}
         value={code}
-        onChangeText={setCode}
+        onChangeText={code => {
+          setCode(code);
+          handleFulfill(code);
+        }}
         cellCount={CELL_COUNT}
         rootStyle={styles.codeFieldRoot}
         keyboardType="number-pad"
@@ -143,7 +186,11 @@ export default function LoginScreen({navigation}) {
         renderCell={({index, symbol, isFocused}) => (
           <Text
             key={index}
-            style={[styles.cell, isFocused && styles.focusCell]}
+            style={[
+              styles.cell,
+              isFocused && styles.focusCell,
+              isFull && styles.full,
+            ]}
             onLayout={getCellOnLayoutHandler(index)}>
             {symbol || (isFocused ? <Cursor /> : null)}
           </Text>
@@ -151,7 +198,10 @@ export default function LoginScreen({navigation}) {
       />
 
       {/* Confirm Otp */}
-      <TouchableOpacity style={styles.button} onPress={() => ConfirmCode()}>
+      <TouchableOpacity
+        style={styles.button}
+        disabled={!code}
+        onPress={() => ConfirmCode()}>
         <Text style={styles.text}>CONFIRM OTP</Text>
       </TouchableOpacity>
 
@@ -163,7 +213,7 @@ export default function LoginScreen({navigation}) {
           </TouchableOpacity>
         ) : (
           <View style={styles.timerView}>
-            <Text style={styles.remains}>Remaning Time {'   '}</Text>
+            <Text style={styles.remains}>Remaining Time {'   '}</Text>
             <Text style={styles.timers}>
               {minutes < 10 ? `0${minutes}` : minutes}:
               {seconds < 10 ? `0${seconds}` : seconds}
@@ -260,5 +310,8 @@ const styles = StyleSheet.create({
   },
   timerView: {
     flexDirection: 'row',
+  },
+  full: {
+    borderColor: 'green',
   },
 });

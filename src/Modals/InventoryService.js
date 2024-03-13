@@ -13,6 +13,10 @@ import SelectDropdown from 'react-native-select-dropdown';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {useDispatch} from 'react-redux';
 import {addService} from '../redux/reducerSlice.js/ServiceInventorySlice';
+import auth from '@react-native-firebase/auth'
+import firestore from '@react-native-firebase/firestore';
+
+
 
 export default function InventoryService({navigation}) {
   const [serviceName, setServiceName] = useState('');
@@ -36,62 +40,12 @@ export default function InventoryService({navigation}) {
   const onlineSellRef = createRef();
   const purchaseSellRef = createRef();
 
-  const UnitData = [
-    'Unit',
-    'Add Unit',
-    'Pieces',
-    'Box',
-    'Kilograms',
-    'Litre',
-    'Units',
-    'Bags',
-    'BALE',
-    'Billion of Unit',
-    'Bottles',
-    'Buckles',
-    'Bunches',
-    'Bundels',
-    'Cans',
-    'Cartons',
-    'Centimeters',
-    'Cubic Centimeters',
-    'Cubic Meters',
-    'Days',
-    'Dozens',
-    'Drums',
-    'Grammes',
-    'Great Gross',
-    'Gross Yards',
-    'Kilolitre',
-    'Kilometer',
-    'Meters',
-    'Metric Ton',
-    'MilliGram',
-    'Millilitre',
-    'Numbers',
-    'Others',
-    'Packs',
-    'Pairs',
-    'Quintal',
-    'Rolls',
-    'Sets',
-    'Sq. Feet',
-    'Sq. Yards',
-    'Sq. Meters',
-    'tablets',
-    'Ten gross',
-    'Thousand',
-    'Tonnes',
-    'Tubes',
-    'US Gallons',
-    'Yards',
-  ];
-
+  
   // Handle Save Button
-  const handleSaveButton = () => {
+  const handleSaveButton = async () => {
     // console.log('service Date ===>', serviceName, SalePrice + selectedItem, onlineDelivery, acSellPrice,
     //                                       NonACSellPrice, onlineSellPrice, purchasePrice);
-    dispatch(
+   await dispatch(
       addService({
         serviceName,
         SalePrice,
@@ -103,6 +57,20 @@ export default function InventoryService({navigation}) {
         purchasePrice,
       }),
     );
+    await auth().onAuthStateChanged(user => {
+      const uid = user.uid;
+      firestore().collection(serviceName).doc(uid).set({
+        Service_Name:serviceName,
+        Sale_Price:SalePrice,
+        Select_Item:selectedItem,
+        Online_delivery:onlineDelivery,
+        AC_Sell_Price:acSellPrice,
+        Non_AC_sell:NonACSellPrice,
+        OnLine_Sell:onlineSellPrice,
+        Purchase_Sell:purchasePrice,
+      })
+    })
+    navigation.replace('Inventory')
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -470,3 +438,54 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
 });
+
+const UnitData = [
+  'Unit',
+  'Add Unit',
+  'Pieces',
+  'Box',
+  'Kilograms',
+  'Litre',
+  'Units',
+  'Bags',
+  'BALE',
+  'Billion of Unit',
+  'Bottles',
+  'Buckles',
+  'Bunches',
+  'Bundels',
+  'Cans',
+  'Cartons',
+  'Centimeters',
+  'Cubic Centimeters',
+  'Cubic Meters',
+  'Days',
+  'Dozens',
+  'Drums',
+  'Grammes',
+  'Great Gross',
+  'Gross Yards',
+  'Kilolitre',
+  'Kilometer',
+  'Meters',
+  'Metric Ton',
+  'MilliGram',
+  'Millilitre',
+  'Numbers',
+  'Others',
+  'Packs',
+  'Pairs',
+  'Quintal',
+  'Rolls',
+  'Sets',
+  'Sq. Feet',
+  'Sq. Yards',
+  'Sq. Meters',
+  'tablets',
+  'Ten gross',
+  'Thousand',
+  'Tonnes',
+  'Tubes',
+  'US Gallons',
+  'Yards',
+];

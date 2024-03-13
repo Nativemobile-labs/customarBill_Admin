@@ -14,10 +14,71 @@ import {
 import React, {useState, createRef} from 'react';
 import Icons from 'react-native-vector-icons/Ionicons';
 import SelectDropdown from 'react-native-select-dropdown';
-import { Checkbox } from 'react-native-paper';
+import {Checkbox} from 'react-native-paper';
 import {useDispatch} from 'react-redux';
-import { addSupplier } from '../redux/reducerSlice.js/AddSupplierSlice';
+import {addSupplier} from '../redux/reducerSlice.js/AddSupplierSlice';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
+const PickerData = [
+  'Billing Type',
+  'Online Delivery sell Price',
+  'AC Sell Price',
+  'Non AC sell Price',
+];
+const StateData = [
+  'Billing State',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+  'Andaman and Nicobar Islands',
+  'Chandigarh',
+  'Dadra & Nagar Haveli and Daman & Diu',
+  'Delhi',
+  'Jammu and Kashmir',
+  'Lakshadweep',
+  'Puducherry',
+  'Ladakh',
+];
+const ReceivePaymentData = [
+  'Type',
+  'To Receive - Credit',
+  'To Pay - Balance',
+];
+const PaymentTermData = [
+  'Payment Term',
+  'Net 0',
+  'Net 1',
+  'Net 7',
+  'Net 15',
+  'Net 30',
+  'Net 90',
+];
 export default function AddCustomer({navigation}) {
   const [SupplierName, setSupplierName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -41,54 +102,75 @@ export default function AddCustomer({navigation}) {
 
   const dispatch = useDispatch();
 
-
   const phoneNumberRef = createRef();
   const gstNumberRef = createRef();
 
-  const PickerData = ["Billing Type", "Online Delivery sell Price", "AC Sell Price", "Non AC sell Price"];
-  const StateData = ["Billing State", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra",
-                        "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
-                         "Andaman and Nicobar Islands", "Chandigarh", "Dadra & Nagar Haveli and Daman & Diu", "Delhi", "Jammu and Kashmir", "Lakshadweep", "Puducherry", "Ladakh" ];
-  const ReceivePaymentData = ["Type", "To Receive - Credit", "To Pay - Balance"];
-  const PaymentTermData = ["Payment Term", "Net 0", "Net 1", "Net 7", "Net 15", "Net 30", "Net 90"];
+ 
 
   // access contacts
   const addFromContact = async () => {
-    if (Platform.OS === 'android'){
-      PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-          title: 'Contacts',
-          message: 'This app would like to view your Contacts.',
-        }).then(() => {
-          loadContacts();
-        });
-    } else{
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+        title: 'Contacts',
+        message: 'This app would like to view your Contacts.',
+      }).then(() => {
+        loadContacts();
+      });
+    } else {
       loadContacts();
     }
-  }
+  };
 
   // load contact
   const loadContacts = () => {
-    Contacts.getAll().then(contacts => {
-      contacts.sort(
-        (a,b) => a.givenName.toLowerCase() > b.toLowerCase(),
-      );
-      setContacts(contacts);
-    }).catch(e => {
-      Alert.alert('Permission to access contacts was denied');
-      console.warn('Permission to access contacts was denied');
-    });
-  alert('access contacts');
+    Contacts.getAll()
+      .then(contacts => {
+        contacts.sort((a, b) => a.givenName.toLowerCase() > b.toLowerCase());
+        setContacts(contacts);
+      })
+      .catch(e => {
+        Alert.alert('Permission to access contacts was denied');
+        console.warn('Permission to access contacts was denied');
+      });
+    alert('access contacts');
   };
 
   // Save Supplier
-  const saveCustomerButton = () => {
+  const saveCustomerButton = async () => {
     // console.log('supplier Data =>', SupplierName, phoneNumber, gstNumber, selectedBillingType, billingAddress,
     //                                   selectedState, billingPinCode, openingBalance, selectedBalance, selectedPayment);
-    dispatch(addSupplier({SupplierName, phoneNumber, gstNumber, selectedBillingType, billingAddress,
-                 selectedState, billingPinCode, openingBalance, selectedBalance, selectedPayment}))
-  }
-  
+    dispatch(
+      addSupplier({
+        SupplierName,
+        phoneNumber,
+        gstNumber,
+        selectedBillingType,
+        billingAddress,
+        selectedState,
+        billingPinCode,
+        openingBalance,
+        selectedBalance,
+        selectedPayment,
+      }),
+    );
+    await auth().onAuthStateChanged(user => {
+      const uid = user.uid;
+      firestore().collection(SupplierName).doc(uid).set({
+        Supplier_Name:SupplierName,
+        Phone_Number:phoneNumber,
+        GSTNumber:gstNumber,
+        Billing_Type:selectedBillingType,
+        Billing_Address:billingAddress,
+        Billing_State:selectedState,
+        Billing_Pin_Code:billingPinCode,
+        Opening_Balance:openingBalance,
+        Balance_Type:selectedBalance,
+        Payment_Term:selectedPayment,
+      }).then((result) => console.log(result)).catch((error) => console.log(error))
+    })
+    navigation.navigate('Party List')
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -103,8 +185,9 @@ export default function AddCustomer({navigation}) {
           <View style={styles.lineViewInner} />
         </View>
         <View style={styles.buttonView}>
-          <TouchableOpacity style={styles.productButton} 
-              onPress={() => navigation.replace('AddCustomer')}>
+          <TouchableOpacity
+            style={styles.productButton}
+            onPress={() => navigation.replace('AddCustomer')}>
             <Text style={styles.productText}>Customer</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.productButton}>
@@ -117,7 +200,9 @@ export default function AddCustomer({navigation}) {
             placeholder="Supplier Name/Contact Person"
             autoCapitalize="sentences"
             value={SupplierName}
-            onSubmitEditing={() => phoneNumberRef.current && phoneNumberRef.current.focus()}
+            onSubmitEditing={() =>
+              phoneNumberRef.current && phoneNumberRef.current.focus()
+            }
             onChangeText={text => setSupplierName(text)}
           />
           <TextInput
@@ -126,7 +211,9 @@ export default function AddCustomer({navigation}) {
             autoCapitalize="sentences"
             value={phoneNumber}
             onChangeText={text => setPhoneNumber(text)}
-            onSubmitEditing={() => gstNumberRef.current && gstNumberRef.current.focus()}
+            onSubmitEditing={() =>
+              gstNumberRef.current && gstNumberRef.current.focus()
+            }
             ref={phoneNumberRef}
           />
           <TextInput
@@ -139,171 +226,279 @@ export default function AddCustomer({navigation}) {
             ref={gstNumberRef}
           />
 
-        {/* dropdown List */}
-          <SelectDropdown 
+          {/* dropdown List */}
+          <SelectDropdown
             buttonStyle={styles.dropdownButton}
             buttonTextStyle={styles.DropboxText}
             rowStyle={styles.dropdownRowStyle}
             rowTextStyle={styles.dropdownRowText}
             data={PickerData}
-            defaultButtonText={"Billing Type"}
+            defaultButtonText={'Billing Type'}
             dropdownIconPosition={'right'}
             renderDropdownIcon={isOpened => {
-              return <Icons name={isOpened ? 'caret-down-outline' : 'caret-up-outline'} color={'#444'} size={14} /> }}
-            onSelect={(item) => {setSelectedBillingType(item)}}
-            />
+              return (
+                <Icons
+                  name={isOpened ? 'caret-down-outline' : 'caret-up-outline'}
+                  color={'#444'}
+                  size={14}
+                />
+              );
+            }}
+            onSelect={item => {
+              setSelectedBillingType(item);
+            }}
+          />
         </View>
 
-       {/* GST or Address Button */}
-          <TouchableOpacity style={styles.gstButtonStyle} 
-              onPress={() => [setGstAddressIsVisible(!gstAddressIsVisible)]}>
-            <Text style={styles.blueTextColor}> + Add GST & Address</Text>
-          </TouchableOpacity>
+        {/* GST or Address Button */}
+        <TouchableOpacity
+          style={styles.gstButtonStyle}
+          onPress={() => [setGstAddressIsVisible(!gstAddressIsVisible)]}>
+          <Text style={styles.blueTextColor}> + Add GST & Address</Text>
+        </TouchableOpacity>
 
-       {/* Address Button */}
-      {!gstAddressIsVisible ? null : <View style={{marginBottom: 200}}>
-      <View>
-           <TouchableOpacity style={styles.addressButton} onPress={() => [setAddressIsVisible(!addressIsVisible)]}>
-            <Text style={styles.blueTextColor}>Address (Optional)</Text>
-            <Icons name={addressIsVisible ?'caret-down-outline' : 'caret-up-outline'} color='#008AD0' size={15} 
-              style={styles.downIcon} />
-          </TouchableOpacity>
-       {!addressIsVisible ? null : 
-       <View style={{marginHorizontal: 20}}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Billing Address"
-            keyboardType="email-address"
-            autoCapitalize="sentences"
-            value={billingAddress}
-            onChangeText={text => setBillingAddress(text)}
-          /> 
-          <SelectDropdown 
-            buttonStyle={styles.dropdownButton2}
-            buttonTextStyle={styles.DropboxText}
-            rowStyle={styles.dropdownRowStyle}
-            rowTextStyle={styles.dropdownRowText}
-            data={StateData}
-            defaultButtonText={"Billing State"}
-            dropdownIconPosition={'right'}
-            renderDropdownIcon={isOpened => {
-              return <Icons name={isOpened ? 'caret-down-outline' : 'caret-up-outline'} color={'#444'} size={14} />;
-              }}
-            onSelect={(item) => {setSelectedState(item)}}
-            />
-          <TextInput
-            style={styles.inputText}
-            placeholder="Billing Pin Code"
-            keyboardType="number-pad"
-            autoCapitalize="sentences"
-            value={billingPinCode}
-            onChangeText={text => setBillingPinCode(text)}
-          /> 
-
-        {/* Same Address */}
-           <View style={{marginHorizontal: 20, flexDirection: 'row'}}>
-            <View style={{flexDirection: 'row', marginTop: 10}}>
-              <Checkbox status={checkAddress ? 'checked' : 'unchecked'} color='#008AD0' 
-                  onPress={() =>[setCheckAddress(!checkAddress), setCheckIsVisible(!checkIsVisible)]}/>
-              <Text style={{marginTop: 7, color: 'black', fontWeight: '600'}}>Delivery Address</Text>
-            </View>
-            <View style={{flexDirection: 'row', marginTop: 10, marginLeft: 30}}>
-              <Checkbox status={checkAddress ? 'checked' : 'unchecked'} color='#008AD0' 
-                onPress={() =>setCheckAddress(!checkAddress)}/>
-              <Text style={{marginTop: 7, color: 'black', fontWeight: '600'}}>Same As Billing</Text>
-            </View>
-          </View>
-        </View>}
-      </View>
-
-     {/* Fill Same Address */}
-        <View style={{marginHorizontal: 20}}>
-        {!checkIsVisible ? null :<View>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Delivery Address"
-            keyboardType="email-address"
-            autoCapitalize="sentences"
-            value={billingAddress}
-            // onChangeText={text => setDeliveryAddress(billingAddress)}
-          /> 
-             <SelectDropdown 
-            buttonStyle={styles.dropdownButton2}
-            buttonTextStyle={styles.DropboxText}
-            rowStyle={styles.dropdownRowStyle}
-            rowTextStyle={styles.dropdownRowText}
-            data={StateData}
-            defaultButtonText={'Delivery State'}
-            defaultValue={selectedState}
-            dropdownIconPosition={'right'}
-            renderDropdownIcon={isOpened => {
-              return <Icons name={isOpened ? 'caret-down-outline' : 'caret-up-outline'} color={'#444'} size={14} />;
-              }}
-            onSelect={(item) => {setSelectedItem(item)}}
-            />
-            <TextInput
-            style={styles.inputText}
-            placeholder="Delivery Pin Code"
-            keyboardType="number-pad"
-            autoCapitalize="sentences"
-            value={billingPinCode}
-            // onChangeText={text => setDeliveryPinCode(billingPinCode)}
-          /> 
-        </View>}
-
-      {/* Balance Details */}
-          <View>
-            <TouchableOpacity style={styles.balanceDetailButton} 
-                onPress={() => [setBalanceDetailsIsVisible(!balanceDetailsIsVisible)]}>
-                <Text style={styles.blueTextColor}>Balance Details (Optional)</Text>
-                <Icons name={addressIsVisible ?'caret-down-outline' : 'caret-up-outline'} color='#008AD0' size={15} 
-                    style={{marginLeft: 160, marginTop: 12,}} />
-            </TouchableOpacity>
-          </View>
-          </View>  
-         {!balanceDetailsIsVisible ? null : <View style={{ marginHorizontal: 20}}>
-              <View style={{flexDirection: 'row', flex: 1}}>
-                <TextInput
-                  style={styles.openBalance}
-                  placeholder="Opening Balance"
-                  keyboardType="number-pad"
-                  value={openingBalance}
-                  onChangeText={text => setOPeningBalance(text)}
-                /> 
-                <SelectDropdown 
-                  buttonStyle={styles.balanceTypeStyle}
-                  buttonTextStyle={styles.DropboxText}
-                  rowStyle={styles.dropdownRowStyle}
-                  rowTextStyle={styles.dropdownRowText}
-                  data={ReceivePaymentData}
-                  defaultButtonText={"To Receive-Credit"}
-                  dropdownIconPosition={'right'}
-                  renderDropdownIcon={isOpened => {
-                  return <Icons name={isOpened ? 'caret-down-outline' : 'caret-up-outline'} color={'#444'} size={14} />;
-                     }}
-                  onSelect={(item) => {setSelectedBalance(item)}}
+        {/* Address Button */}
+        {!gstAddressIsVisible ? null : (
+          <View style={{marginBottom: 200}}>
+            <View>
+              <TouchableOpacity
+                style={styles.addressButton}
+                onPress={() => [setAddressIsVisible(!addressIsVisible)]}>
+                <Text style={styles.blueTextColor}>Address (Optional)</Text>
+                <Icons
+                  name={
+                    addressIsVisible ? 'caret-down-outline' : 'caret-up-outline'
+                  }
+                  color="#008AD0"
+                  size={15}
+                  style={styles.downIcon}
                 />
+              </TouchableOpacity>
+              {!addressIsVisible ? null : (
+                <View style={{marginHorizontal: 20}}>
+                  <TextInput
+                    style={styles.inputText}
+                    placeholder="Billing Address"
+                    keyboardType="email-address"
+                    autoCapitalize="sentences"
+                    value={billingAddress}
+                    onChangeText={text => setBillingAddress(text)}
+                  />
+                  <SelectDropdown
+                    buttonStyle={styles.dropdownButton2}
+                    buttonTextStyle={styles.DropboxText}
+                    rowStyle={styles.dropdownRowStyle}
+                    rowTextStyle={styles.dropdownRowText}
+                    data={StateData}
+                    defaultButtonText={'Billing State'}
+                    dropdownIconPosition={'right'}
+                    renderDropdownIcon={isOpened => {
+                      return (
+                        <Icons
+                          name={
+                            isOpened ? 'caret-down-outline' : 'caret-up-outline'
+                          }
+                          color={'#444'}
+                          size={14}
+                        />
+                      );
+                    }}
+                    onSelect={item => {
+                      setSelectedState(item);
+                    }}
+                  />
+                  <TextInput
+                    style={styles.inputText}
+                    placeholder="Billing Pin Code"
+                    keyboardType="number-pad"
+                    autoCapitalize="sentences"
+                    value={billingPinCode}
+                    onChangeText={text => setBillingPinCode(text)}
+                  />
+
+                  {/* Same Address */}
+                  <View style={{marginHorizontal: 20, flexDirection: 'row'}}>
+                    <View style={{flexDirection: 'row', marginTop: 10}}>
+                      <Checkbox
+                        status={checkAddress ? 'checked' : 'unchecked'}
+                        color="#008AD0"
+                        onPress={() => [
+                          setCheckAddress(!checkAddress),
+                          setCheckIsVisible(!checkIsVisible),
+                        ]}
+                      />
+                      <Text
+                        style={{
+                          marginTop: 7,
+                          color: 'black',
+                          fontWeight: '600',
+                        }}>
+                        Delivery Address
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginTop: 10,
+                        marginLeft: 30,
+                      }}>
+                      <Checkbox
+                        status={checkAddress ? 'checked' : 'unchecked'}
+                        color="#008AD0"
+                        onPress={() => setCheckAddress(!checkAddress)}
+                      />
+                      <Text
+                        style={{
+                          marginTop: 7,
+                          color: 'black',
+                          fontWeight: '600',
+                        }}>
+                        Same As Billing
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              )}
+            </View>
+
+            {/* Fill Same Address */}
+            <View style={{marginHorizontal: 20}}>
+              {!checkIsVisible ? null : (
+                <View>
+                  <TextInput
+                    style={styles.inputText}
+                    placeholder="Delivery Address"
+                    keyboardType="email-address"
+                    autoCapitalize="sentences"
+                    value={billingAddress}
+                    // onChangeText={text => setDeliveryAddress(billingAddress)}
+                  />
+                  <SelectDropdown
+                    buttonStyle={styles.dropdownButton2}
+                    buttonTextStyle={styles.DropboxText}
+                    rowStyle={styles.dropdownRowStyle}
+                    rowTextStyle={styles.dropdownRowText}
+                    data={StateData}
+                    defaultButtonText={'Delivery State'}
+                    defaultValue={selectedState}
+                    dropdownIconPosition={'right'}
+                    renderDropdownIcon={isOpened => {
+                      return (
+                        <Icons
+                          name={
+                            isOpened ? 'caret-down-outline' : 'caret-up-outline'
+                          }
+                          color={'#444'}
+                          size={14}
+                        />
+                      );
+                    }}
+                    onSelect={item => {
+                      setSelectedItem(item);
+                    }}
+                  />
+                  <TextInput
+                    style={styles.inputText}
+                    placeholder="Delivery Pin Code"
+                    keyboardType="number-pad"
+                    autoCapitalize="sentences"
+                    value={billingPinCode}
+                    // onChangeText={text => setDeliveryPinCode(billingPinCode)}
+                  />
+                </View>
+              )}
+
+              {/* Balance Details */}
+              <View>
+                <TouchableOpacity
+                  style={styles.balanceDetailButton}
+                  onPress={() => [
+                    setBalanceDetailsIsVisible(!balanceDetailsIsVisible),
+                  ]}>
+                  <Text style={styles.blueTextColor}>
+                    Balance Details (Optional)
+                  </Text>
+                  <Icons
+                    name={
+                      addressIsVisible
+                        ? 'caret-down-outline'
+                        : 'caret-up-outline'
+                    }
+                    color="#008AD0"
+                    size={15}
+                    style={{marginLeft: 160, marginTop: 12}}
+                  />
+                </TouchableOpacity>
               </View>
-                <SelectDropdown 
+            </View>
+            {!balanceDetailsIsVisible ? null : (
+              <View style={{marginHorizontal: 20}}>
+                <View style={{flexDirection: 'row', flex: 1}}>
+                  <TextInput
+                    style={styles.openBalance}
+                    placeholder="Opening Balance"
+                    keyboardType="number-pad"
+                    value={openingBalance}
+                    onChangeText={text => setOPeningBalance(text)}
+                  />
+                  <SelectDropdown
+                    buttonStyle={styles.balanceTypeStyle}
+                    buttonTextStyle={styles.DropboxText}
+                    rowStyle={styles.dropdownRowStyle}
+                    rowTextStyle={styles.dropdownRowText}
+                    data={ReceivePaymentData}
+                    defaultButtonText={'To Receive-Credit'}
+                    dropdownIconPosition={'right'}
+                    renderDropdownIcon={isOpened => {
+                      return (
+                        <Icons
+                          name={
+                            isOpened ? 'caret-down-outline' : 'caret-up-outline'
+                          }
+                          color={'#444'}
+                          size={14}
+                        />
+                      );
+                    }}
+                    onSelect={item => {
+                      setSelectedBalance(item);
+                    }}
+                  />
+                </View>
+                <SelectDropdown
                   buttonStyle={styles.dropdownButton2}
                   buttonTextStyle={styles.DropboxText}
                   rowStyle={styles.dropdownRowStyle}
                   rowTextStyle={styles.dropdownRowText}
                   data={PaymentTermData}
-                  defaultButtonText={"Payment Term"}
+                  defaultButtonText={'Payment Term'}
                   dropdownIconPosition={'right'}
                   renderDropdownIcon={isOpened => {
-                  return <Icons name={isOpened ? 'caret-down-outline' : 'caret-up-outline'} color={'#444'} size={14} />;
-                     }}
-                  onSelect={(item) => {setSelectedPayment(item)}}
+                    return (
+                      <Icons
+                        name={
+                          isOpened ? 'caret-down-outline' : 'caret-up-outline'
+                        }
+                        color={'#444'}
+                        size={14}
+                      />
+                    );
+                  }}
+                  onSelect={item => {
+                    setSelectedPayment(item);
+                  }}
                 />
-            </View>}
-        </View>}
+              </View>
+            )}
+          </View>
+        )}
       </ScrollView>
 
-   {/* Save Button */}
+      {/* Save Button */}
       <View style={styles.saveButtonView}>
-        <TouchableOpacity style={styles.saveButton} onPress={() => saveCustomerButton()}>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() => saveCustomerButton()}>
           <Text style={styles.saveText}>Save Customer</Text>
         </TouchableOpacity>
       </View>
@@ -416,9 +611,8 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   dropdownRowStyle: {
-    backgroundColor: 'white', 
+    backgroundColor: 'white',
     borderBottomColor: 'silver',
-  
   },
   dropdownRowText: {
     color: 'black',
@@ -441,12 +635,12 @@ const styles = StyleSheet.create({
     height: 40,
     paddingLeft: 18,
     borderRadius: 5,
-    width: '90%', 
+    width: '90%',
   },
   downIcon: {
     marginLeft: 210,
     marginTop: 12,
-  },  
+  },
   dropdownButton2: {
     width: '100%',
     backgroundColor: 'white',
@@ -455,19 +649,19 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   openBalance: {
-    backgroundColor: 'white', 
-    marginTop: 15, 
-    height: 40, 
-    paddingLeft: 18, 
-    borderRadius: 5, 
-    width: '59%', 
+    backgroundColor: 'white',
+    marginTop: 15,
+    height: 40,
+    paddingLeft: 18,
+    borderRadius: 5,
+    width: '59%',
     marginRight: '1%',
   },
   balanceTypeStyle: {
-    backgroundColor: 'white', 
-    height: 40, 
-    marginTop: 15, 
-    borderRadius: 5, 
+    backgroundColor: 'white',
+    height: 40,
+    marginTop: 15,
+    borderRadius: 5,
     width: '40%',
   },
   balanceDetailButton: {
@@ -478,6 +672,6 @@ const styles = StyleSheet.create({
     height: 40,
     paddingLeft: 18,
     borderRadius: 5,
-    width: '100%'
-  }
+    width: '100%',
+  },
 });

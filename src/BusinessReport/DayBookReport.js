@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react'
 // import {Picker} from '@react-native-picker/picker';
 import SelectDropdown from 'react-native-select-dropdown';
 import Icons from 'react-native-vector-icons/Ionicons';
+// import PickerData from '../arrayData/ArrayData';
 
 export default function DayBookReport() {
   const [startDate, setStartDate] = useState();
@@ -13,7 +14,7 @@ export default function DayBookReport() {
   // Show Date
   useEffect(() => {
     let today = new Date();
-    let date = today.getDate()+ '/'+ today.getMonth()+1+'/'+ today.getFullYear();
+    let date = today.getDate()+ '/'+ today.getMonth()+'/'+ today.getFullYear();
     setStartDate(date);
     setEndDate(date);
     

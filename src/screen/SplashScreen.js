@@ -4,16 +4,14 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import React, {useState, useEffect} from 'react';
+import auth from '@react-native-firebase/auth';
 
 export default function SplashScreen({navigation}) {
-  const [, setLoading] = useState(false);
-
   useEffect(() => {
     setTimeout(() => {
-      setLoading(false);
-      navigation.replace('Authentication');
+      navigation.replace(auth().currentUser ? 'Drawer' : 'Authentication');
     }, 4000);
-  }, [navigation]);
+  }, []);
 
   return (
     <View style={styles.container}>

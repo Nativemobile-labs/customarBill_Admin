@@ -11,43 +11,59 @@ import {
 import React, {useState, useEffect} from 'react';
 import Icons from 'react-native-vector-icons/Ionicons';
 import SelectDropdown from 'react-native-select-dropdown';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
+const PickerData = [
+  'Month',
+  'Year',
+  'Custom',
+  'Last 7 Days',
+  'Today',
+  'Last 30 Days',
+];
 export default function ReportScreen({navigation}) {
   const [isVisible, setIsVisible] = useState(false);
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
-  const PickerData = [
-    'Month',
-    'Year',
-    'Custom',
-    'Last 7 Days',
-    'Today',
-    'Last 30 Days',
-  ];
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  
+  const handleConfirm = (date) => {
+    setSelectedDate(date);
+    hideDatePicker();
+  };
 
-  // Show Date
+  const showDatePicker = () => {
+    setDatePickerVisible(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisible(false);
+  };
+
+  // SHOW DATE
   useEffect(() => {
     let today = new Date();
     let date =
-      today.getDate() + '/' + today.getMonth() + 1 + '/' + today.getFullYear();
+      today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
     setStartDate(date);
     setEndDate(date);
   }, []);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.mainView}>
-        {/* GSTR Reports */}
+        {/* GSTR REPORTS */}
         <Text style={styles.headingText}>GSTR Reports</Text>
-        {/* create Modal */}
+        {/* CREATE MODAL */}
         <Modal
-          animationType="none"
+          animationType="slide"
           visible={isVisible}
           transparent={true}
           onRequestClose={() => setIsVisible(!isVisible)}>
           <View style={styles.innerModalView}>
             <Text style={styles.modalTitles}>Please Select Dates</Text>
             <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-              {/* dropdown */}
+
+              {/* DROPDOWN */}
               <SelectDropdown
                 buttonStyle={styles.dropdownButton}
                 rowStyle={styles.dropdownRowStyle}
@@ -67,12 +83,22 @@ export default function ReportScreen({navigation}) {
                 }}
                 dropdownIconPosition={'right'}
               />
-              {/* Selected Date */}
-              <TouchableOpacity style={styles.yearStyle}>
+
+              {/* SELECTED DATE */}
+              <TouchableOpacity style={styles.yearStyle} onPress={() => alert('start date')}>
                 <Text style={styles.dateText}>{startDate}</Text>
+                <DateTimePickerModal 
+                  date={startDate}
+                  isVisible={datePickerVisible}
+                  mode="date"
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+                />
               </TouchableOpacity>
+               
               <Text style={styles.to}>To</Text>
-              <TouchableOpacity style={styles.yearStyle}>
+
+              <TouchableOpacity style={styles.yearStyle} onPress={() => alert('end start')}>
                 <Text style={styles.dateText}>{endDate}</Text>
               </TouchableOpacity>
             </View>
@@ -123,7 +149,8 @@ export default function ReportScreen({navigation}) {
           />
           <Text style={styles.selectiveText}>GSTR-3b</Text>
         </TouchableOpacity>
-        {/* Business Reports */}
+
+        {/* BUSINESS REPORTS */}
         <Text style={styles.headingText}>Business Reports</Text>
         <TouchableOpacity
           style={styles.textView}
@@ -147,7 +174,8 @@ export default function ReportScreen({navigation}) {
           />
           <Text style={styles.selectiveText}>Day Book Report</Text>
         </TouchableOpacity>
-        {/* Transaction Reports */}
+
+        {/* TRANSACTION REPORTS */}
         <Text style={styles.headingText}>Transaction Reports</Text>
         <TouchableOpacity
           style={styles.textView}
@@ -324,7 +352,7 @@ export default function ReportScreen({navigation}) {
           />
           <Text style={styles.selectiveText}>Party Details Report</Text>
         </TouchableOpacity>
-        {/* Item/Stock Reports */}
+        {/* ITEM/STOCK REPORTS */}
         <Text style={styles.headingText}>Item/Stock Reports</Text>
         <TouchableOpacity
           style={styles.textView}
@@ -437,9 +465,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   innerModalView: {
-    marginTop: 100,
+    marginTop: 200,
     position: 'absolute',
-    backgroundColor: '#D9E4EC',
+    backgroundColor: 'gray',
     width: '95%',
     height: '29%',
     alignSelf: 'center',
@@ -472,7 +500,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
     marginTop: 17,
-    marginLeft: 4,
+    alignSelf: 'center'
   },
   to: {
     marginTop: 30,

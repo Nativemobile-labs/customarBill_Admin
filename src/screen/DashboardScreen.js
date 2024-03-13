@@ -20,7 +20,7 @@ import Icons from 'react-native-vector-icons/Ionicons';
 
 export default function DashboardScreen({navigation}) {
   const [toggleValue, setToggleValue] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false)
+  const [showPrivacy, setShowPrivacy] = useState(false);
   const ToggleButton = value => {
     setToggleValue(value);
   };
@@ -36,16 +36,16 @@ export default function DashboardScreen({navigation}) {
   useEffect(() => {
     let today = new Date();
     let date =
-      today.getDate() + '/' + today.getMonth() + 1 + '/' + today.getFullYear();
+      today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
     setReminderDate(date);
   }, []);
 
-  const saleSlice =useSelector((state) => state.addNewSaleSlice)
-  const moneySlice = useSelector((state) => state.moneyInSlice)
-  const MoneyOutSlice = useSelector((state) => state.moneyOutSlice)
-  const purchaseSlice = useSelector((state) => state.addPurchaseSlice)
-  const expSlice = useSelector((state) => state.expenseSlice)
-  const lowStock = useSelector((state)=> state.productInventorySlice)
+  const saleSlice = useSelector(state => state.addNewSaleSlice);
+  const moneySlice = useSelector(state => state.moneyInSlice);
+  const MoneyOutSlice = useSelector(state => state.moneyOutSlice);
+  const purchaseSlice = useSelector(state => state.addPurchaseSlice);
+  const expSlice = useSelector(state => state.expenseSlice);
+  const lowStock = useSelector(state => state.productInventorySlice);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView vertical={true} showsVerticalScrollIndicator={false}>
@@ -59,7 +59,10 @@ export default function DashboardScreen({navigation}) {
             }}>
             {toggleValue ? 'Privacy On' : 'Privacy Off'}
           </Text>
-          <Switch onValueChange={() => [ToggleButton, setShowPrivacy(!showPrivacy)]} value={toggleValue} />
+          <Switch
+            onValueChange={() => [ToggleButton, setShowPrivacy(!showPrivacy)]}
+            value={toggleValue}
+          />
         </View>
         <View style={styles.viewContainer}>
           <Text style={styles.ViewText}>Share App</Text>
@@ -68,218 +71,245 @@ export default function DashboardScreen({navigation}) {
           </TouchableOpacity>
         </View>
 
-        { showPrivacy ? null : <View>
-        
-         <View style={{marginHorizontal: 20}}>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {/* Sale */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Sale List')}>
-              <Icons
-                name="bar-chart-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Sale</Text>
-                <Text style={styles.amountView}>{'\u20B9'}{saleSlice.totalAmount}</Text>
-              </View>
-            </TouchableOpacity>
+        {showPrivacy ? null : (
+          <View>
+            <View style={{marginHorizontal: 20}}>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}>
+                {/* Sale */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Sale List')}>
+                  <Icons
+                    name="bar-chart-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Sale</Text>
+                    <Text style={styles.amountView}>
+                      {'\u20B9'}
+                      {saleSlice.totalAmount}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Order */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Order/Quotation/Estimate')}>
-              <Icons
-                name="cart-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Order</Text>
-                <Text style={styles.amountView}>{'\u20B9'}0.00</Text>
-              </View>
-            </TouchableOpacity>
-            {/* Money In */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Money In List')}>
-              <Text style={{color: '#ec9006', fontSize: 50, marginLeft: 8}}>
-                {'\u20B9'}
-              </Text>
-              <View>
-                <Text style={styles.saleText}>Money In</Text>
-                <Text style={styles.amountView}>{'\u20B9'}{moneySlice.totalAmount}</Text>
-              </View>
-            </TouchableOpacity>
+                {/* Order */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() =>
+                    navigation.navigate('Order/Quotation/Estimate')
+                  }>
+                  <Icons
+                    name="cart-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Order</Text>
+                    <Text style={styles.amountView}>{'\u20B9'}0.00</Text>
+                  </View>
+                </TouchableOpacity>
+                {/* Money In */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Money In List')}>
+                  <Text style={{color: '#ec9006', fontSize: 50, marginLeft: 8}}>
+                    {'\u20B9'}
+                  </Text>
+                  <View>
+                    <Text style={styles.saleText}>Money In</Text>
+                    <Text style={styles.amountView}>
+                      {'\u20B9'}
+                      {moneySlice.totalAmount}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Purchase */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Purchase List')}>
-              <Icons
-                name="reader-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Purchase</Text>
-                <Text style={styles.amountView}>{'\u20B9'}{purchaseSlice.totalAmount}</Text>
-              </View>
-            </TouchableOpacity>
+                {/* Purchase */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Purchase List')}>
+                  <Icons
+                    name="reader-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Purchase</Text>
+                    <Text style={styles.amountView}>
+                      {'\u20B9'}
+                      {purchaseSlice.totalAmount}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Expense */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Expense List')}>
-              <Icons
-                name="layers-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Expense</Text>
-                <Text style={styles.amountView}>{'\u20B9'}{expSlice.totalAmount}</Text>
-              </View>
-            </TouchableOpacity>
+                {/* Expense */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Expense List')}>
+                  <Icons
+                    name="layers-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Expense</Text>
+                    <Text style={styles.amountView}>
+                      {'\u20B9'}
+                      {expSlice.totalAmount}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Money Out */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Money Out List')}>
-              <Text style={{color: '#ec9006', fontSize: 50, marginLeft: 8}}>
-                {'\u20B9'}
-              </Text>
-              <View>
-                <Text style={styles.saleText}>Money Out</Text>
-                <Text style={styles.amountView}>{'\u20B9'}{MoneyOutSlice.totalAmount}</Text>
-              </View>
-            </TouchableOpacity>
+                {/* Money Out */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Money Out List')}>
+                  <Text style={{color: '#ec9006', fontSize: 50, marginLeft: 8}}>
+                    {'\u20B9'}
+                  </Text>
+                  <View>
+                    <Text style={styles.saleText}>Money Out</Text>
+                    <Text style={styles.amountView}>
+                      {'\u20B9'}
+                      {MoneyOutSlice.totalAmount}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Visitor */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Order/Quotation/Estimate')}>
-              <Icons
-                name="man-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Visitor</Text>
-                <Text style={styles.amountView}>{'\u20B9'}0.00</Text>
-              </View>
-            </TouchableOpacity>
+                {/* Visitor */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() =>
+                    navigation.navigate('Order/Quotation/Estimate')
+                  }>
+                  <Icons
+                    name="man-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Visitor</Text>
+                    <Text style={styles.amountView}>{'\u20B9'}0.00</Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Note Counter */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => Alert.alert('add screen')}>
-              <Icons
-                name="calculator-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Note Counter</Text>
-                <Text style={styles.amountView}>{'\u20B9'}0.00</Text>
-              </View>
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
+                {/* Note Counter */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => Alert.alert('add screen')}>
+                  <Icons
+                    name="calculator-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Note Counter</Text>
+                    <Text style={styles.amountView}>{'\u20B9'}0.00</Text>
+                  </View>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
 
-        {/* Report Section */}
-        <View style={{marginHorizontal: 20}}>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {/* Report */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Report')}>
-              <Icons
-                name="stats-chart-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Report</Text>
-                <Text style={styles.StockView}> Check {'\n'} Report</Text>
-              </View>
-            </TouchableOpacity>
+            {/* Report Section */}
+            <View style={{marginHorizontal: 20}}>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}>
+                {/* Report */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Report')}>
+                  <Icons
+                    name="stats-chart-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Report</Text>
+                    <Text style={styles.StockView}> Check {'\n'} Report</Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Receivable */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Party List')}>
-              <Icons
-                name="time-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Receivable</Text>
-                <Text style={styles.StockView}>{'\u20B9'}0.00</Text>
-              </View>
-            </TouchableOpacity>
+                {/* Receivable */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Party List')}>
+                  <Icons
+                    name="time-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Receivable</Text>
+                    <Text style={styles.StockView}>{'\u20B9'}0.00</Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Payable */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Party List')}>
-              <Icons
-                name="time-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Payable</Text>
-                <Text style={styles.StockView}>{'\u20B9'}0.00</Text>
-              </View>
-            </TouchableOpacity>
+                {/* Payable */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Party List')}>
+                  <Icons
+                    name="time-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Payable</Text>
+                    <Text style={styles.StockView}>{'\u20B9'}0.00</Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Cash Book */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Cash Book')}>
-              <Icons
-                name="time-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Cash Book</Text>
-                <Text style={styles.StockView}>{'\u20B9'}0.00</Text>
-              </View>
-            </TouchableOpacity>
+                {/* Cash Book */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Cash Book')}>
+                  <Icons
+                    name="time-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Cash Book</Text>
+                    <Text style={styles.StockView}>{'\u20B9'}0.00</Text>
+                  </View>
+                </TouchableOpacity>
 
-            {/* Low Stock */}
-            <TouchableOpacity
-              style={styles.containerView}
-              onPress={() => navigation.navigate('Inventory')}>
-              <Icons
-                name="time-outline"
-                size={40}
-                color="#ec9006"
-                style={styles.iconStyle}
-              />
-              <View>
-                <Text style={styles.saleText}>Low Stock</Text>
-                <Text style={styles.StockView}>{'\u20B9'}{lowStock.lowStockAlert}</Text>
-              </View>
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
-        </View> }
+                {/* Low Stock */}
+                <TouchableOpacity
+                  style={styles.containerView}
+                  onPress={() => navigation.navigate('Inventory')}>
+                  <Icons
+                    name="time-outline"
+                    size={40}
+                    color="#ec9006"
+                    style={styles.iconStyle}
+                  />
+                  <View>
+                    <Text style={styles.saleText}>Low Stock</Text>
+                    <Text style={styles.StockView}>
+                      {'\u20B9'}
+                      {lowStock.lowStockAlert}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </View>
+        )}
 
         {/* Payment Reminder */}
         <View

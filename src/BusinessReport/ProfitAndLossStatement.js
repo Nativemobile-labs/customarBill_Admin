@@ -8,7 +8,7 @@ const [endDate, setEndDate] = useState()
   // Show Date
   useEffect(() => {
     let today = new Date();
-    let date = today.getDate()+ '/'+ today.getMonth()+1+'/'+ today.getFullYear();
+    let date = today.getDate()+ '/'+ today.getMonth()+'/'+ today.getFullYear();
     setStartDate(date);
     setEndDate(date);
     

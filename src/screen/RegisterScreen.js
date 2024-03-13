@@ -6,91 +6,160 @@ import {
   TouchableOpacity,
   ScrollView,
   Keyboard,
+  ToastAndroid,
 } from 'react-native';
 import React, {useState, createRef, useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import {registerUser} from '../redux/reducerSlice.js/RegisterUserSlice';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth'
 
 export default function RegisterScreen({navigation}) {
   const dispatch = useDispatch();
-  //declare input state
+  const [loading, setLoading] = useState('')
+
+  //DECLARE INPUT STATE
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [userName, setUserName] = useState('');
   const [sirName, setSirName] = useState('');
   const [titleName, setTitleName] = useState('');
 
-  // declare validation state
+  // DECLARE VALIDATION STATE
   const [nameError, setNameError] = useState('');
   const [lastError, setLastError] = useState('');
   const [userError, setUserError] = useState('');
   const [sirError, setSirError] = useState('');
   const [titleError, setTitleError] = useState('');
 
-  // declare references state
+  // DECLARE REFERENCES STATE
   const nameRef = createRef();
   const lNameRef = createRef();
   const uNameRef = createRef();
   const sNameRef = createRef();
 
   // ====================== Validation =====================
+  // useEffect(() => {
+  //   handleName();
+  //   handleLastName();
+  //   handleUserName();
+  //   handleSirName();
+  //   handleTitleName();
+  // }, [handleName, handleLastName, handleUserName, handleSirName, handleTitleName]);
+
   useEffect(() => {
-    formValidation();
-  }, [firstName, lastName, userName, sirName, titleName]);
-
-  const formValidation = () => {
-    const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
-
-    if (firstName != '') {
-      if (firstName.length < 5) {
-        setNameError('First Name less Then Five');
-      } else {
-        setNameError('');
+    if(firstName != ''){
+      if(firstName.length < 4){
+        setNameError('Name is too short')
+      }else{
+        setNameError('')
       }
       return;
-    }
-
-    if (lastName != '') {
-      if (lastName.length < 4) {
-        setLastError('Last Name Less Then Four');
-      } else {
-        setLastError('');
+     }
+     if(lastName != ''){
+      if(lastName.length < 4){
+        setLastError('Name is too short')
+      }else{
+        setLastError('')
       }
       return;
-    }
+     }
 
-    if (userName != '') {
-      if (!regEx.test(userName)) {
-        setUserError('Invalid User Name');
-      } else {
+     auth().onAuthStateChanged(user => {
+      setLoading(user.phoneNumber)
+     })
+
+  }, [firstName])
+
+  // const formValidation = () => {
+  //   const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
+  // };
+
+  const handleName = () => {
+    if(firstName != ''){
+      if(firstName.length < 4){
+        setNameError('Name is too short')
+      }else{
+        setNameError('')
+      }
+      return;
+     }
+  }
+
+  const handleLastName = () => {
+    if(lastName != ''){
+      if(lastName.length < 4){
+        setLastError('Name is too short')
+      }else{
+        setLastError('')
+      }
+      return;
+     }
+  }
+
+  const handleUserName = () => {
+    if(userName != ''){
+      if(userName.length < 7){
+        setUserError('is too short')
+      }else{
         setUserError('');
       }
       return;
-    }
+     }
+  }
 
-    if (sirName != '') {
-      if (sirName.length < 3) {
-        setSirError('Sir Name Less then Three');
-      } else {
-        setSirError('');
+  const handleSirName = () => {
+    if(sirName != ''){
+      if(sirName.length < 5){
+        setSirError('too short');
+      }else{
+        setSirError('')
       }
       return;
-    }
-
-    if (titleName != '') {
-      if (titleName.length < 4) {
-        setTitleError('Title Name Less Then Four');
-      } else {
-        setTitleError('');
+     }
+  }
+  const handleTitleName = () => {
+    if(titleName != ''){
+      if(titleName.length < 5){
+        setTitleError('too short')
+      }else{
+        setTitleError('')
       }
-      return;
-    }
-  };
+     }
+  }
 
   // ====================== Register Button =====================
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    // formValidation()
     dispatch(registerUser({firstName, lastName, userName, sirName, titleName}));
-    navigation.navigate('Drawer');
+    // navigation.navigate('Drawer');
+    await auth().onAuthStateChanged(user => {
+      const uid = user.uid;
+      const phone = user.phoneNumber;
+      firestore().collection(userName).doc(uid).set({
+          First_Name: firstName,
+          Last_Name: lastName,
+          User_Name: userName,
+          Sir_Name: sirName,
+          Mobile_Number: phone,
+          
+      }).then(() => {
+        navigation.navigate('Drawer', {
+          firstName, lastName, userName,sirName, titleName
+        })
+        ToastAndroid.showWithGravity(
+          'Register Success',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+        );
+      }).catch((error) =>{
+        ToastAndroid.showWithGravity(
+          error,
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+        );
+      } )
+    })
   };
 
   return (
@@ -110,19 +179,19 @@ export default function RegisterScreen({navigation}) {
           flex: 1,
           marginTop: 40,
         }}>
-        {/* First Name */}
+        {/* FIRST NAME */}
         <TextInput
           style={styles.input}
           placeholder="First Name"
           keyboardType="email-address"
           returnKeyType="next"
           value={firstName}
-          onChangeText={text => setFirstName(text)}
+          onChangeText={firstName => setFirstName(firstName)}
           onSubmitEditing={() => nameRef.current && nameRef.current.focus()}
         />
-        {firstName != '' && <Text style={styles.errorView}>{nameError}</Text>}
+        {firstName != '' &&  <Text style={styles.errorView}>{nameError}</Text>}
 
-        {/* Last Name */}
+        {/* LAST NAME */}
         <TextInput
           ref={nameRef}
           style={styles.input}
@@ -130,12 +199,12 @@ export default function RegisterScreen({navigation}) {
           keyboardType="email-address"
           returnKeyType="next"
           value={lastName}
-          onChangeText={text => setLastName(text)}
+          onChangeText={lastName => setLastName(lastName)}
           onSubmitEditing={() => lNameRef.current && lNameRef.current.focus()}
         />
         {lastName != '' && <Text style={styles.errorView}>{lastError}</Text>}
 
-        {/* User Name */}
+        {/* USER NAME */}
         <TextInput
           ref={lNameRef}
           style={styles.input}
@@ -143,12 +212,12 @@ export default function RegisterScreen({navigation}) {
           keyboardType="email-address"
           returnKeyType="next"
           value={userName}
-          onChangeText={text => setUserName(text)}
+          onChangeText={userName => setUserName(userName)}
           onSubmitEditing={() => uNameRef.current && uNameRef.current.focus()}
         />
-        {userName != '' && <Text style={styles.errorView}>{userError}</Text>}
+        {userName !== '' && <Text style={styles.errorView}>{userError}</Text>}
 
-        {/* Sir Name */}
+        {/* SIR NAME */}
         <TextInput
           ref={uNameRef}
           style={styles.input}
@@ -156,25 +225,25 @@ export default function RegisterScreen({navigation}) {
           keyboardType="email-address"
           returnKeyType="next"
           value={sirName}
-          onChangeText={text => setSirName(text)}
+          onChangeText={sirName => setSirName(sirName)}
           onSubmitEditing={() => sNameRef.current && sNameRef.current.focus()}
         />
-        {sirName != '' && <Text style={styles.errorView}>{sirError}</Text>}
+        {sirName !== '' && <Text style={styles.errorView}>{sirError}</Text>}
 
-        {/* Title Name */}
+        {/* TITLE NAME */}
         <TextInput
           ref={sNameRef}
           style={styles.input}
           placeholder="Title Name"
           keyboardType="email-address"
           returnKeyType="done"
-          value={titleName}
-          onChangeText={text => setTitleName(text)}
+          value={loading}
+          onChangeText={titleName => setTitleName(titleName)}
           onSubmitEditing={() => Keyboard.dismiss()}
         />
-        {titleName != '' && <Text style={styles.errorView}>{titleError}</Text>}
+        {titleName !== '' && <Text style={styles.errorView}>{titleError}</Text>}
 
-        {/* Submit Button */}
+        {/* SUBMIT BUTTON */}
       </View>
       <TouchableOpacity style={styles.button} onPress={() => handleRegister()}>
         <Text style={styles.text}>SUBMIT</Text>

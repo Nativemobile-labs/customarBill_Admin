@@ -6,86 +6,157 @@ import {
   Modal,
   TextInput,
   Keyboard,
+  FlatList,
+  ScrollView,
+  ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
 import {categories} from '../redux/reducerSlice.js/CategoriesSlice';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export default function CategoriesScreen({navigation}) {
   const [isVisible, setIsVisible] = useState(false);
   const [addCategoryName, setCategoryName] = useState('');
+  const [dataList, setDataList] = useState([]);
+  // console.log('pradeep=======hjkhfjk=================>',dataList)
 
   const dispatch = useDispatch();
-  const categoriesData = useSelector((state) => state.categoriesSlice);
-  console.log(categoriesData)
-  // const newArr = [];
+  const categoriesData = useSelector(state => state.categoriesSlice);
+  // console.log(categoriesData);
 
-  // add categories on save button
+  // ADD CATEGORY ON SAVE BUTTON
   const addCategorySaveButton = async () => {
     // await newArr.push(addCategory);
     // console.log(newArr);
     // setCategory('');
     // console.log("Add Categories =>",addCategoryName);
     dispatch(categories(addCategoryName));
+    await auth().onAuthStateChanged(user => {
+      const uid = user.uid;
+      const docRef = firestore().collection('Category').doc(uid);
+      docRef
+        .update({
+          Category_Name: firestore.FieldValue.arrayUnion(addCategoryName),
+        })
+        .then(() => {
+          setCategoryName('');
+          ToastAndroid.showWithGravity(
+            'SUCCESS',
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+          );
+        })
+        .catch(error => {
+          setCategoryName('');
+          ToastAndroid.showWithGravity(
+            error,
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+          );
+        });
+    });
+  };
+
+  // SHOW DATA ITEMS
+  useEffect(async () => {
+    const unsubscribe = await firestore().collection('Category').onSnapshot((querySnapShort) => {
+      const data = querySnapShort.docs.map((documentSnapshot) => ({
+        id: documentSnapshot.id,
+        ...documentSnapshot.data()
+      }))
+      setDataList(data)
+      // console.log('pradeep========================>',data)
+    })
+    return () => unsubscribe();
+  },[])
+
+  // RENDER CATEGORY
+  const renderCategory = ({item}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Inventory')}
+        style={styles.renderView}>
+        <Text style={styles.renderText}>{item.abc}</Text>
+        <TouchableOpacity
+          onPress={() => alert('share items')}
+          style={{position: 'absolute', right: 40, top: 6}}>
+          <Icon name="share-social" size={25} color={'#ffa505'} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => alert('menus')}
+          style={{position: 'absolute', right: 10, top: 6}}>
+          <Icon name="ellipsis-vertical" size={25} color={'gray'} />
+        </TouchableOpacity>
+      </TouchableOpacity>
+    );
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.ViewButton}>
-        {/* Inventory Button */}
-        <TouchableOpacity
-          style={styles.selectedButton}
-          onPress={() => navigation.navigate('Inventory')}>
-          <Text style={styles.selectedText}>Inventory</Text>
-        </TouchableOpacity>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.ViewButton}>
+          {/* INVENTORY BUTTON */}
+          <TouchableOpacity
+            style={styles.selectedButton}
+            onPress={() => navigation.navigate('Inventory')}>
+            <Text style={styles.selectedText}>Inventory</Text>
+          </TouchableOpacity>
 
-        {/* Categories Button */}
-        <TouchableOpacity style={styles.unselectButton}>
-          <Text style={styles.unselectedText}>Categories</Text>
-        </TouchableOpacity>
-      </View>
+          {/* CATEGORY BUTTON */}
+          <TouchableOpacity style={styles.unselectButton}>
+            <Text style={styles.unselectedText}>Categories</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Modal */}
-      <Modal
-        animationType="slide"
-        visible={isVisible}
-        transparent={true}
-        onRequestClose={() => {
-          setIsVisible(!isVisible);
-        }}>
-        <View style={styles.modalInnerView}>
-          <Text style={styles.addCategoryText}>Add New Category</Text>
-          <TextInput
-            style={styles.inputField}
-            placeholder="Category Name"
-            keyboardType="email-address"
-            autoCapitalize="sentences"
-            value={addCategoryName}
-            onChangeText={(addCategoryName) => setCategoryName(addCategoryName)}
-            onSubmitEditing={Keyboard.dismiss}
+        {/* MODAL */}
+        <Modal
+          animationType="slide"
+          visible={isVisible}
+          transparent={true}
+          onRequestClose={() => {
+            setIsVisible(!isVisible);
+          }}>
+          <View style={styles.modalInnerView}>
+            <Text style={styles.addCategoryText}>Add New Category</Text>
+            <TextInput
+              style={styles.inputField}
+              placeholder="Category Name"
+              keyboardType="email-address"
+              autoCapitalize="sentences"
+              value={addCategoryName}
+              onChangeText={addCategoryName => setCategoryName(addCategoryName)}
+              onSubmitEditing={Keyboard.dismiss}
+            />
+
+            <TouchableOpacity
+              style={styles.cancelButtonBackground}
+              onPress={() => setIsVisible(false)}>
+              <Text style={styles.saveButton}>Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.saveButtonBackground}
+              onPress={() => [addCategorySaveButton(), setIsVisible(false)]}>
+              <Text style={styles.saveButton}>Save</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+        <View style={{marginBottom: 200}}>
+          <FlatList
+            style={{marginTop: 15}}
+            data={dataList}
+            renderItem={renderCategory}
+            scrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item, index) => index.toString()}
           />
-
-          <TouchableOpacity
-            style={styles.cancelButtonBackground}
-            onPress={() => setIsVisible(false)}>
-            <Text style={styles.saveButton}>Cancel</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.saveButtonBackground}
-            onPress={() => [addCategorySaveButton(), setIsVisible(false)]}>
-            <Text style={styles.saveButton}>Save</Text>
-          </TouchableOpacity>
         </View>
-      </Modal>
-      
-      {/* View Categories Data */}
-        <View style={{marginHorizontal: 20, marginTop: 10, backgroundColor: 'white', height: 40, borderRadius: 15}}>
-          <Text style={{marginLeft: 15, marginTop: 10, color: 'black', fontWeight: '600'}}>{addCategoryName}</Text>
-        </View>
-
-      {/* Add Categories Button */}
+      </ScrollView>
+      {/* ADD CATEGORY BUTTON */}
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => {
@@ -164,15 +235,15 @@ const styles = StyleSheet.create({
   },
   addCategoryText: {
     color: 'black',
-    fontWeight: '600',
-    marginLeft: 15,
-    marginTop: 10,
+    fontWeight: 'bold',
+    marginLeft: 25,
+    marginTop: 20,
     fontSize: 17,
   },
   modalInnerView: {
-    marginTop: 90,
+    marginTop: 280,
     position: 'absolute',
-    backgroundColor: '#D9E4EC',
+    backgroundColor: 'gray',
     width: '95%',
     height: 245,
     alignSelf: 'center',
@@ -197,7 +268,7 @@ const styles = StyleSheet.create({
   },
   cancelButtonBackground: {
     backgroundColor: 'silver',
-    marginTop: 40,
+    marginTop: 30,
     height: 40,
     width: '90%',
     alignSelf: 'center',
@@ -223,4 +294,33 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingTop: 9,
   },
+  renderView: {
+    marginHorizontal: 20,
+    marginTop: 5,
+    backgroundColor: 'silver',
+    height: 40,
+    borderRadius: 5,
+  },
+  renderText: {
+    marginLeft: 15,
+    marginTop: 10,
+    color: 'black',
+    fontWeight: '600',
+  },
 });
+
+const categoryListData = [
+  {
+    id: 1,
+    abc: 'ABC',
+  },
+  {
+    id: 2,
+    abc: 'DEF',
+  },
+  {
+    id: 3,
+    abc: 'HIJK',
+  },
+ 
+];

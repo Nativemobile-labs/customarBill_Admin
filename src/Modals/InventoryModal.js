@@ -13,6 +13,8 @@ import SelectDropdown from 'react-native-select-dropdown';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {useDispatch} from 'react-redux';
 import {addProduct} from '../redux/reducerSlice.js/ProductInventorySlice';
+import auth from '@react-native-firebase/auth'
+import firestore from '@react-native-firebase/firestore';
 
 export default function InventoryModal({navigation}) {
   const [ProductName, setProductName] = useState('');
@@ -87,11 +89,11 @@ export default function InventoryModal({navigation}) {
     'US Gallons',
     'Yards',
   ];
-  // handle Save Button
-  const handleSaveButton = () => {
+  // HANDLE SAVE BUTTON
+  const handleSaveButton = async () => {
     // console.log('Product Data =>', ProductName, SalePrice + selectedItem, onlineDelivery, acSellPrice, NonACSellPrice,
     //                                 onlineSellPrice, purchasePrice, lowStockAlert);
-    dispatch(
+   await dispatch(
       addProduct({
         ProductName,
         SalePrice,
@@ -104,6 +106,21 @@ export default function InventoryModal({navigation}) {
         lowStockAlert,
       }),
     );
+    await auth().onAuthStateChanged(user => {
+      const uid = user.uid;
+      firestore().collection(ProductName).doc(uid).set({
+        Product_Name:ProductName,
+        Sale_Price:SalePrice,
+        Select_Item:selectedItem,
+        Online_Delivery:onlineDelivery,
+        AC_Sell:acSellPrice,
+        NOn_AC_Sell:NonACSellPrice,
+        Online_Sell_Price:onlineSellPrice,
+        Purchase_Price:purchasePrice,
+        Low_Stock:lowStockAlert,
+      })
+    })
+    navigation.replace('Inventory');
   };
   return (
     <SafeAreaView style={styles.container}>

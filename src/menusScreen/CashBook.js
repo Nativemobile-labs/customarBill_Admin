@@ -11,25 +11,25 @@ import React, {useState, useEffect} from 'react';
 import Icons from 'react-native-vector-icons/Ionicons';
 import SelectDropdown from 'react-native-select-dropdown';
 import {useSelector} from 'react-redux';
-
+const selectTerms = [
+  'Month',
+  'Year',
+  'Custom',
+  'Last 7 Days',
+  'Today',
+  'Last 30 Days',
+];
 export default function CashBook() {
   const [selectData, setSelectData] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endData, setEndData] = useState('');
-  const selectTerms = [
-    'Month',
-    'Year',
-    'Custom',
-    'Last 7 Days',
-    'Today',
-    'Last 30 Days',
-  ];
+  
 
   // Show Date
   useEffect(() => {
     let today = new Date();
     let date =
-      today.getDate() + '/' + today.getMonth() + 1 + '/' + today.getFullYear();
+      today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
     setStartDate(date);
     setEndData(date);
   }, []);
